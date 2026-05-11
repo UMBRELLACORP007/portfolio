@@ -1,10 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || '/api',
-  timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
-});
+  baseURL: "https://portfolio-backend-byp8.onrender.com/api"
+})
 
 // ── Projects ────────────────────────────────────────────────
 export const getProjects = (params = {}) =>
