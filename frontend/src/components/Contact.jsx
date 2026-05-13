@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { submitContact } from '../services/api';
 
+const EMAIL_ADDRESS = 'dikshant2426D@gmail.com';
+
 const SOCIAL_LINKS = [
   {
     label: 'GitHub',
@@ -14,7 +16,7 @@ const SOCIAL_LINKS = [
   },
   {
     label: 'Email',
-    href: 'mailto:dikshant2426D@gmail.com',
+    href: '#',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -22,10 +24,11 @@ const SOCIAL_LINKS = [
       </svg>
     ),
     color: '#4f8eff',
+    copyText: EMAIL_ADDRESS,
   },
   {
     label: 'LinkedIn',
-    href: ' https://in.linkedin.com/in/dikshant-shinde',
+    href: 'https://in.linkedin.com/in/dikshant-shinde',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
@@ -56,6 +59,17 @@ export default function Contact() {
   const [errorMsg, setErrorMsg] = useState('');
   const [focused, setFocused] = useState(null);
 
+  // Toast state
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 2200);
+  };
+
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -84,6 +98,18 @@ export default function Contact() {
     borderColor: focused === field ? '#a8ff3e' : '#1e2d44',
   });
 
+  const handleSocialClick = async (e, link) => {
+    if (link.copyText) {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(link.copyText);
+        showToast('Email copied to clipboard!', 'success');
+      } catch {
+        showToast('Failed to copy email.', 'error');
+      }
+    }
+  };
+
   return (
     <section
       id="contact"
@@ -93,13 +119,46 @@ export default function Contact() {
         position: 'relative',
       }}
     >
+      {/* Toast */}
+      {toast.show && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '28px',
+            right: '28px',
+            zIndex: 9999,
+            padding: '12px 18px',
+            borderRadius: '12px',
+            fontFamily: 'DM Mono, monospace',
+            fontSize: '12px',
+            background:
+              toast.type === 'success'
+                ? 'rgba(168,255,62,0.12)'
+                : 'rgba(255,107,107,0.12)',
+            border:
+              toast.type === 'success'
+                ? '1px solid rgba(168,255,62,0.35)'
+                : '1px solid rgba(255,107,107,0.35)',
+            color: toast.type === 'success' ? '#a8ff3e' : '#ff6b6b',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+            animation: 'toastIn 0.25s ease',
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Top edge */}
       <div
         style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0,
+          top: 0,
+          left: 0,
+          right: 0,
           height: '1px',
-          background: 'linear-gradient(90deg, transparent, #1e2d44 30%, #1e2d44 70%, transparent)',
+          background:
+            'linear-gradient(90deg, transparent, #1e2d44 30%, #1e2d44 70%, transparent)',
         }}
       />
 
@@ -141,8 +200,9 @@ export default function Contact() {
                 <a
                   key={link.label}
                   href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={link.copyText ? undefined : "_blank"}
+                  rel={link.copyText ? undefined : "noopener noreferrer"}
+                  onClick={(e) => handleSocialClick(e, link)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -154,6 +214,7 @@ export default function Contact() {
                     color: '#8899aa',
                     transition: 'all 0.25s ease',
                     textDecoration: 'none',
+                    cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = link.color + '60';
@@ -181,6 +242,7 @@ export default function Contact() {
                     >
                       {link.label}
                     </div>
+
                     {link.label === 'Email' && (
                       <div
                         style={{
@@ -189,9 +251,10 @@ export default function Contact() {
                           color: '#4a5a6e',
                         }}
                       >
-                        dikshant2426D@gmail.com
+                        {EMAIL_ADDRESS}
                       </div>
                     )}
+
                     {link.label === 'GitHub' && (
                       <div
                         style={{
@@ -203,6 +266,7 @@ export default function Contact() {
                         github.com/UMBRELLACORP007
                       </div>
                     )}
+
                     {link.label === 'LinkedIn' && (
                       <div
                         style={{
@@ -212,7 +276,7 @@ export default function Contact() {
                         }}
                       >
                         www.linkedin.com/in/dikshant-shinde
-                    </div>
+                      </div>
                     )}
                   </div>
                 </a>
@@ -238,7 +302,8 @@ export default function Contact() {
               >
                 <span
                   style={{
-                    width: '7px', height: '7px',
+                    width: '7px',
+                    height: '7px',
                     background: '#a8ff3e',
                     borderRadius: '50%',
                     display: 'inline-block',
@@ -321,7 +386,10 @@ export default function Contact() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <form
+                onSubmit={handleSubmit}
+                style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}
+              >
                 <h3
                   style={{
                     fontFamily: 'Syne, sans-serif',
@@ -352,7 +420,13 @@ export default function Contact() {
                 )}
 
                 {/* Name + Email row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '14px',
+                  }}
+                >
                   <div>
                     <label
                       style={{
@@ -497,6 +571,22 @@ export default function Contact() {
           </div>
         </div>
       </div>
+
+      {/* Toast animation keyframes */}
+      <style>
+        {`
+          @keyframes toastIn {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0px);
+            }
+          }
+        `}
+      </style>
     </section>
   );
 }
