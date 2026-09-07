@@ -26,7 +26,7 @@ const LEARNING_ITEMS = [
     title: 'Cloud Deployment',
     description: 'Deploying apps with Railway, Vercel, and exploring AWS fundamentals.',
     icon: '☁️',
-    progress: 45,
+    progress: 70,
     color: '#c084fc',
   },
   {
@@ -40,7 +40,7 @@ const LEARNING_ITEMS = [
     title: 'Modern Full Stack Development',
     description: 'End-to-end application architecture, CI/CD workflows, and best practices.',
     icon: '🚀',
-    progress: 50,
+    progress: 60,
     color: '#fb7185',
   },
 ];

@@ -83,7 +83,7 @@ export default function About() {
             >
               {[
                 { value: '5th', label: 'Semester' },
-                { value: '5+', label: 'Projects' },
+                { value: '9+', label: 'Projects' },
                 { value: '∞', label: 'Learning' },
               ].map((stat) => (
                 <div
